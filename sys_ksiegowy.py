@@ -80,8 +80,13 @@ while True:
             print(f"Aktualny stan konta wynosi: {stan_konta} zł")
         case "lista":
             print(f"Aktualny stan magazynowy:\n{magazyn}")
-#    case "magazyn":
-#    case "zprzeglad":
+        case "magazyn":
+            item = input(f"Informacje o którym produkcie mam wyświetlić: {magazyn.keys()}?\n")
+            if item not in magazyn:
+                print("Brak produktu w magazynie.")
+            else:
+                print(magazyn[item])
+#    case "przeglad":
         case "koniec":
             break #koniec pętli while true
 
