@@ -1,6 +1,4 @@
-from idlelib import history
-
-operacje = ["saldo", "sprzedaż", "zakup", "konto", "lista", "magazyn", "przeglad", "koniec"]
+operacje = ["saldo", "sprzedaż", "zakup", "konto", "lista", "magazyn", "przegląd", "koniec"]
 magazyn = { #tworzę słownik słowników
     "rower":{
         "wartość": 900.00,
@@ -39,13 +37,13 @@ magazyn = { #tworzę słownik słowników
         "ilość":10
     }
 }
-historia_op = []
-stan_konta = 0
+historia_op = [] #pusta lisa do zapisywania operacji
+stan_konta = 1000
 while True:
     operacja = input(f"Podaj operację jaką chcesz wykonać: {operacje}\n")
     match operacja:
         case "saldo":
-            historia_op.append("saldo")
+            historia_op.append("saldo") # Dodaję operację do listy historii
             zmiana = input("Chcesz dodać kwotę do stanu konta, czy odjąć?\n")
             match zmiana:
                 case "dodać":
@@ -55,7 +53,6 @@ while True:
                     else:
                         stan_konta+=a
                         print(f"Do stanu Twojego konta dodano {a} zł")
-                        #historia_op.append({"typ": "saldo", "kwota dodana": a})
                 case "odjąć":
                     a = float(input("Podaj kwotę, którą mam odjąć z konta: "))
                     if a > stan_konta:
@@ -65,12 +62,10 @@ while True:
                     else:
                         stan_konta-=a
                         print(f"Z Twojego konta ubyło {a} zł")
-                        #historia_op.append({"typ": "saldo", "kwota odjęta":a})
                 case _:
                     print("Nie znaleziono takiej operacji.")
-            #print (f"Aktualny stan konta wynosi: {stan_konta} zł")
         case "sprzedaż":
-            historia_op.append("sprzedaż")
+            historia_op.append("sprzedaż") #dodaję operację do listy historii
             item = input(f"Który produkt chcesz sprzedać? {magazyn.keys()}\n")
             if item not in magazyn: #sprawdzam czy dany produkt jest w magazynie
                 print("Brak produktu w magazynie.")
@@ -87,9 +82,8 @@ while True:
                     else:
                         stan_konta+=cost*quantity
                         magazyn[item]["ilość"]-=quantity #odejmuje z magazynu sprzedane produkty
-            #historia_op.append({"typ":"sprzedaż","Produkt":item,""})
         case "zakup":
-            historia_op.append("zakup")
+            historia_op.append("zakup") #dodaję operację do listy historii
             item = input("Jaki produkt chcesz kupić?\n")
             cost = float(input("Ile kosztuje ten produkt?\n"))
             if not isinstance(cost, float) or cost <= 0:
@@ -118,7 +112,7 @@ while True:
                 print("Brak produktu w magazynie.")
             else:
                 print(magazyn[item])
-        case "przeglad":
+        case "przegląd":
             print("Podaj zakres wyświetlenia historii.")
             od = input("Początek: ")
             do = input("Koniec: ")
@@ -139,4 +133,3 @@ while True:
             break #koniec pętli while true
         case _:
             print("Nie znaleziono takiej operacji.")
-
