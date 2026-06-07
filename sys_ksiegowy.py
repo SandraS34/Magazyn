@@ -44,64 +44,73 @@ while True:
     match operacja:
         case "saldo":
             historia_op.append("saldo") # Dodaję operację do listy historii
-            zmiana = input("Chcesz dodać kwotę do stanu konta, czy odjąć?\n")
-            match zmiana:
-                case "dodać":
-                    a = float(input("Podaj kwotę, którą mam dodać do stanu konta: "))
-                    if a < 0:
-                        print("Podałeś ujemną kwotę.")
-                    else:
-                        stan_konta+=a
-                        print(f"Do stanu Twojego konta dodano {a} zł")
-                case "odjąć":
-                    a = float(input("Podaj kwotę, którą mam odjąć z konta: "))
-                    if a > stan_konta:
-                        print("Nie mogę wykonać tej operacji. Na koncie jest za mało pieniędzy!")
-                    elif a <0:
-                        print("Podałeś ujemną kwotę.")
-                    else:
-                        stan_konta-=a
-                        print(f"Z Twojego konta ubyło {a} zł")
-                case _:
-                    print("Nie znaleziono takiej operacji.")
+            try:
+                zmiana = input("Chcesz dodać kwotę do stanu konta, czy odjąć?\n")
+                match zmiana:
+                    case "dodać":
+                        a = float(input("Podaj kwotę, którą mam dodać do stanu konta: "))
+                        if a < 0:
+                            print("Podałeś ujemną kwotę.")
+                        else:
+                            stan_konta+=a
+                            print(f"Do stanu Twojego konta dodano {a} zł")
+                    case "odjąć":
+                        a = float(input("Podaj kwotę, którą mam odjąć z konta: "))
+                        if a > stan_konta:
+                            print("Nie mogę wykonać tej operacji. Na koncie jest za mało pieniędzy!")
+                        elif a <0:
+                            print("Podałeś ujemną kwotę.")
+                        else:
+                            stan_konta-=a
+                            print(f"Z Twojego konta ubyło {a} zł")
+                    case _:
+                        print("Nie znaleziono takiej operacji.")
+            except ValueError:
+                print("Podana wartość musi być liczbą.")
         case "sprzedaż":
             historia_op.append("sprzedaż") #dodaję operację do listy historii
-            item = input(f"Który produkt chcesz sprzedać? {magazyn.keys()}\n")
-            if item not in magazyn: #sprawdzam czy dany produkt jest w magazynie
-                print("Brak produktu w magazynie.")
-            else:
-                quantity = int(input("Ile sztuk chcesz sprzedać?\n"))
-                if not isinstance(quantity, int) or quantity <= 0:
-                    print("Podałeś nieprawidłową wartość!")
-                elif quantity > magazyn[item]["ilość"]: #sprawdzam czy mam wystarczającą ilość w magazynie
-                    print(f"W magazynie znajduje się tylko {magazyn[item]["ilość"]} sztuk.")
+            try:
+                item = input(f"Który produkt chcesz sprzedać? {magazyn.keys()}\n")
+                if item not in magazyn: #sprawdzam czy dany produkt jest w magazynie
+                    print("Brak produktu w magazynie.")
                 else:
-                    cost = float(input("Ile kosztuje ten produkt?\n"))
-                    if not isinstance(cost, float) or cost <= 0:
+                    quantity = int(input("Ile sztuk chcesz sprzedać?\n"))
+                    if quantity <= 0:
                         print("Podałeś nieprawidłową wartość!")
+                    elif quantity > magazyn[item]["ilość"]: #sprawdzam czy mam wystarczającą ilość w magazynie
+                        print(f"W magazynie znajduje się tylko {magazyn[item]["ilość"]} sztuk.")
                     else:
-                        stan_konta+=cost*quantity
-                        magazyn[item]["ilość"]-=quantity #odejmuje z magazynu sprzedane produkty
+                        cost = float(input("Ile kosztuje ten produkt?\n"))
+                        if cost <= 0:
+                            print("Podałeś nieprawidłową wartość!")
+                        else:
+                            stan_konta+=cost*quantity
+                            magazyn[item]["ilość"]-=quantity #odejmuje z magazynu sprzedane produkty
+            except ValueError:
+                print("Podana wartość musi być liczbą.")
         case "zakup":
             historia_op.append("zakup") #dodaję operację do listy historii
-            item = input("Jaki produkt chcesz kupić?\n")
-            cost = float(input("Ile kosztuje ten produkt?\n"))
-            if not isinstance(cost, float) or cost <= 0:
-                print("Podałeś nieprawidłową wartość!")
-            else:
-                quantity = int(input("Ile sztuk chcesz kupić?\n"))
-                if not isinstance(quantity, int) or quantity <= 0:
+            try:
+                item = input("Jaki produkt chcesz kupić?\n")
+                cost = float(input("Ile kosztuje ten produkt?\n"))
+                if cost <= 0:
                     print("Podałeś nieprawidłową wartość!")
                 else:
-                    exp=cost*quantity
-                    if exp > stan_konta: #sprawdzam czy mnie stać na takie zakupy
-                        print("Nie stać Cię na takie zakupy!")
-                    elif item not in magazyn: #jeśli mnie stać to sprawdzam czy mam ten produkt w magazynie
-                        magazyn[item]={"wartość":cost,"ilość":quantity} #dodaję nowy produkt do magazynu
-                        stan_konta-=exp
+                    quantity = int(input("Ile sztuk chcesz kupić?\n"))
+                    if quantity <= 0:
+                        print("Podałeś nieprawidłową wartość!")
                     else:
-                        magazyn[item]["ilość"]+=quantity #zwiększam ilość już posiadanego produktu
-                        stan_konta-=exp
+                        exp=cost*quantity
+                        if exp > stan_konta: #sprawdzam czy mnie stać na takie zakupy
+                            print("Nie stać Cię na takie zakupy!")
+                        elif item not in magazyn: #jeśli mnie stać to sprawdzam czy mam ten produkt w magazynie
+                            magazyn[item]={"wartość":cost,"ilość":quantity} #dodaję nowy produkt do magazynu
+                            stan_konta-=exp
+                        else:
+                            magazyn[item]["ilość"]+=quantity #zwiększam ilość już posiadanego produktu
+                            stan_konta-=exp
+            except ValueError:
+                    print("Podana wartość musi być liczbą.")
         case "konto":
             print(f"Aktualny stan konta wynosi: {stan_konta} zł")
         case "lista":
@@ -114,21 +123,24 @@ while True:
                 print(magazyn[item])
         case "przegląd":
             print("Podaj zakres wyświetlenia historii.")
-            od = input("Początek: ")
-            do = input("Koniec: ")
-            if od == "":
-                od = 0
-            else:
-                od = int(od)
-            if do == "":
-                do = len(historia_op)
-            else:
-                do = int(do)
-            if od >=0 and do <= len(historia_op) and od<=do:
-                for operacja in historia_op[od:do]:
-                    print(operacja)
-            else:
-                print(f"Niepoprawny zakres. Ilość wykonanych operacji wynosi: {len(historia_op)}")
+            try:
+                od = input("Początek: ")
+                do = input("Koniec: ")
+                if od == "":
+                    od = 0
+                else:
+                    od = int(od)
+                if do == "":
+                    do = len(historia_op)
+                else:
+                    do = int(do)
+                if od >=0 and do <= len(historia_op) and od<=do:
+                    for operacja in historia_op[od:do]:
+                        print(operacja)
+                else:
+                    print(f"Niepoprawny zakres. Ilość wykonanych operacji wynosi: {len(historia_op)}")
+            except ValueError:
+                print("Nie mogę wykonać polecenia! Podaj wartości liczbowe!")
         case "koniec":
             break #koniec pętli while true
         case _:
